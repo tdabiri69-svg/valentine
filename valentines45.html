@@ -1,0 +1,172 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine 💘</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  height: 100vh;
+  background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.card {
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,.2);
+  position: relative;
+  z-index: 2;
+}
+
+h1 { color: #e63946; }
+
+.buttons {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  padding: 15px 30px;
+  font-size: 1.1em;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+}
+
+#yesBtn {
+  background: #e63946;
+  color: white;
+}
+
+#noBtn {
+  background: #adb5bd;
+  position: relative;
+}
+
+/* floating emojis */
+.floating {
+  position: fixed;
+  bottom: 0;
+  font-size: 26px;
+  pointer-events: none;
+  animation: floatUp 3s linear forwards;
+}
+
+@keyframes floatUp {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-100vh); opacity: 0; }
+}
+
+/* love screen */
+#overlay {
+  position: fixed;
+  inset: 0;
+  background: #e63946;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3.5em;
+  color: white;
+  opacity: 0;
+  transition: opacity 1s ease;
+  pointer-events: none;
+  z-index: 5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+  <h1>Maria, will you be my Valentine? 💘</h1>
+  <div class="buttons">
+    <button id="yesBtn">Yes 💖</button>
+    <button id="noBtn">No 🙃</button>
+  </div>
+</div>
+
+<div id="overlay">Happy Valentines Day, Maria ❤️</div>
+
+<script>
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+const card = document.getElementById("card");
+const overlay = document.getElementById("overlay");
+
+/* ---------- SLIPPERY NO (SMOOTH + SAFE) ---------- */
+function dodge(x, y) {
+  const r = noBtn.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height / 2;
+  const dist = Math.hypot(x - cx, y - cy);
+
+  if (dist < 100) {
+    noBtn.style.position = "fixed";
+    noBtn.style.left =
+      Math.random() * (window.innerWidth - r.width) + "px";
+    noBtn.style.top =
+      Math.random() * (window.innerHeight - r.height) + "px";
+  }
+}
+
+document.addEventListener("mousemove", e => dodge(e.clientX, e.clientY));
+document.addEventListener("touchmove", e => {
+  const t = e.touches[0];
+  dodge(t.clientX, t.clientY);
+});
+
+/* ---------- FLOATING EMOJIS ---------- */
+function floatEmoji() {
+  const el = document.createElement("div");
+  el.className = "floating";
+  el.textContent = ["🐱","🐶","💖","✨"][Math.floor(Math.random()*4)];
+  el.style.left = Math.random() * window.innerWidth + "px";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+/* ---------- YES BUTTON (THIS WORKS) ---------- */
+yesBtn.addEventListener("click", () => {
+  // remove card so nothing blocks clicks
+  card.remove();
+
+  yesBtn.style.position = "fixed";
+  yesBtn.style.top = "50%";
+  yesBtn.style.left = "50%";
+  yesBtn.style.transform = "translate(-50%,-50%)";
+  yesBtn.style.borderRadius = "0";
+  yesBtn.style.zIndex = "4";
+
+  let scale = 1;
+
+  const grow = setInterval(() => {
+    scale += 0.25;
+    yesBtn.style.transform =
+      `translate(-50%,-50%) scale(${scale})`;
+
+    floatEmoji();
+
+    if (scale > 25) {
+      clearInterval(grow);
+      overlay.style.opacity = 1;
+    }
+  }, 30);
+});
+</script>
+
+</body>
+</html>
